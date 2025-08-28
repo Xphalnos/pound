@@ -12,13 +12,19 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
+set(COMPILER ${CMAKE_CXX_COMPILER_ID})
+message(STATUS "Using ${COMPILER} Version ${CMAKE_CXX_COMPILER_VERSION}")
+
+if (COMPILER STREQUAL "MSVC")
+  set(msvc ON)
+elseif (COMPILER STREQUAL "GNU")
+  set(GCC ON)
+elseif (COMPILER STREQUAL "Clang")
+  set(Clang ON)
+endif()
 
 # Optimizations
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
-if (WIN32)
-  add_compile_options($<$<CONFIG:Release>:/Oi>)
-  add_compile_options($<$<CONFIG:Release>:/Ot>)
-endif()
 
 project(Pound)
 
@@ -29,20 +35,23 @@ find_package(toml11 4.4.0 CONFIG)
 include_directories(core)
 add_subdirectory(3rd_Party)
 
-
 file(GLOB_RECURSE Core core/*.cpp core/*.h)
 
 add_executable(Pound
   ${Core}
 )
 
-target_compile_options(Pound PRIVATE -Wall -Wpedantic
--Wshadow
--Wpointer-arith
--Wcast-qual
--Wcast-align
--Wconversion
-)
+if (Clang)
+    target_compile_options(Pound PRIVATE
+        -Wall
+        -Wpedantic
+        -Wshadow
+        -Wpointer-arith
+        -Wcast-qual
+        -Wcast-align
+        -Wconversion
+    )
+endif()
 
 target_precompile_headers(Pound PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/core/Base/Types.h)
 

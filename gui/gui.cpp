@@ -2,6 +2,7 @@
 #include "Base/Assert.h"
 #include "Base/Logging/Log.h"
 #include "color.h"
+#include "Roboto-Regular.h"
 #include "imgui_impl_opengl3_loader.h"
 
 #include <imgui.h>
@@ -127,6 +128,8 @@ bool gui::init_imgui(gui::window_t* main_window)
     (void)::ImGui::CreateContext();
     ImGuiIO& io = ::ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+    ImFont* Font = io.Fonts->AddFontFromMemoryTTF((void*)Roboto_Regular_ttf, Roboto_Regular_ttf_len, 15.f);
 
     ::apply_theme();
 
